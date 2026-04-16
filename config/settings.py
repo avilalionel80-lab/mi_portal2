@@ -24,10 +24,10 @@ SECRET_KEY = 'django-insecure-@j+4(pld)$n7u&1m3f33jihyftie%23&&oxecvp^yo#c!1d&0x
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
-STATIC_ROOT = BASE_DIR / 'staticfiles' 
-ALLOWED_HOSTS = ['Lionel123456789.pythonanywhere.com']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
+ALLOWED_HOSTS = ['tuusuario.pythonanywhere.com']
+CSRF_TRUSTED_ORIGINS = ['https://tuusuario.pythonanywhere.com']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
 
 # Application definition
 
