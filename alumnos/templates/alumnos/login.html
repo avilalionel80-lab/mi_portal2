@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portal Cautivo — IPF</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg-deep:     #04080f;
+      --bg-card:     #0b1120;
+      --bg-panel:    #0f1a2e;
+      --border:      rgba(0,180,255,0.18);
+      --border-glow: rgba(0,180,255,0.55);
+      --accent:      #00b4ff;
+      --accent2:     #0066cc;
+      --accent3:     #00e5ff;
+      --text-main:   #e8f4fc;
+      --text-muted:  #7a9ab8;
+      --danger:      #ff4757;
+      --success:     #2ed573;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-deep);
+      font-family: 'Exo 2', sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Animated grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,180,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,180,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridDrift 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gridDrift {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+
+    /* ── Radial glow blobs ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobPulse 6s ease-in-out infinite alternate;
+    }
+    .blob1 { width: 500px; height: 500px; top: -100px; left: -100px; background: #0055aa; }
+    .blob2 { width: 400px; height: 400px; bottom: -80px; right: -80px; background: #00b4ff; animation-delay: -3s; }
+
+    @keyframes blobPulse {
+      from { opacity: 0.12; transform: scale(1); }
+      to   { opacity: 0.22; transform: scale(1.1); }
+    }
+
+    /* ── Scan line ── */
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.4;
+      animation: scan 4s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes scan {
+      0%   { top: 0; }
+      100% { top: 100vh; }
+    }
+
+    /* ── Main card ── */
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 40px 36px;
+      box-shadow:
+        0 0 0 1px rgba(0,180,255,0.06),
+        0 8px 40px rgba(0,0,0,0.7),
+        0 0 80px rgba(0,100,200,0.12);
+      animation: cardIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── Corner brackets ── */
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      border-color: var(--accent);
+      border-style: solid;
+    }
+    .card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 14px 0 0 0; }
+    .card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 14px 0; }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s 0.15s ease both;
+    }
+
+    .logo-wrap {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      animation: rotateSlow 8s linear infinite;
+    }
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .logo-wrap img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      padding: 8px;
+      filter: drop-shadow(0 0 12px rgba(0,180,255,0.4));
+    }
+
+    .institution {
+      text-align: center;
+    }
+    .institution h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--text-main) 40%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .institution p {
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 26px;
+      animation: fadeUp 0.6s 0.25s ease both;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-glow));
+    }
+    .divider::after {
+      background: linear-gradient(90deg, var(--border-glow), transparent);
+    }
+    .divider span {
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ── Form ── */
+    form { animation: fadeUp 0.6s 0.3s ease both; }
+
+    .field {
+      margin-bottom: 18px;
+    }
+    .field label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px; height: 16px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 1.8;
+      transition: stroke 0.25s;
+      pointer-events: none;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px 12px 42px;
+      color: var(--text-main);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      letter-spacing: 0.3px;
+    }
+    .input-wrap input::placeholder { color: rgba(122,154,184,0.5); }
+    .input-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,180,255,0.1), 0 0 16px rgba(0,180,255,0.08);
+    }
+    .input-wrap input:focus + svg,
+    .input-wrap:focus-within svg { stroke: var(--accent); }
+
+    /* Checkbox estático y limpio para mantener el estilo */
+    .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
+      margin-top: -6px;
+    }
+    .checkbox-wrap input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg-panel);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .checkbox-wrap input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .checkbox-wrap input[type="checkbox"]:checked::after {
+      content: '✔';
+      position: absolute;
+      color: var(--bg-deep);
+      font-size: 10px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .checkbox-wrap label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      letter-spacing: 0.5px;
+    }
+
+    /* Error message condicional */
+    .error-msg {
+      display: flex;
+      background: rgba(255,71,87,0.1);
+      border: 1px solid rgba(255,71,87,0.3);
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: var(--danger);
+      margin-bottom: 16px;
+      letter-spacing: 0.3px;
+      align-items: center;
+      gap: 8px;
+      animation: shake 0.3s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+
+    /* ── Submit button ── */
+    .btn-submit {
+      width: 100%;
+      margin-top: 8px;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none;
+      border-radius: 9px;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.25s;
+      box-shadow: 0 4px 20px rgba(0,100,200,0.4);
+    }
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .btn-submit:hover::after { opacity: 1; }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,120,220,0.55); }
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-submit .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ── */
+    .card-footer {
+      margin-top: 24px;
+      text-align: center;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .card-footer p {
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .card-footer .status-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      color: rgba(0,229,255,0.6);
+    }
+    .status-dot::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent3);
+      box-shadow: 0 0 6px var(--accent3);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.3; }
+    }
+
+    /* ── Success overlay (se puede dejar para que lo dispares en el template success si quieres) ── */
+    .success-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--bg-card);
+      border-radius: 16px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 10;
+      animation: fadeIn 0.4s ease;
+    }
+    .success-overlay.visible { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .check-circle {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(46,213,115,0.12);
+      border: 2px solid var(--success);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 24px rgba(46,213,115,0.3);
+    }
+    .check-circle svg {
+      width: 28px; height: 28px;
+      stroke: var(--success); fill: none; stroke-width: 2.5;
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: drawCheck 0.5s 0.2s ease forwards;
+    }
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="scanline"></div>
+
+  <div class="card">
+    <div class="header">
+      <div class="logo-wrap">
+        <div class="logo-ring"></div>
+        <img src="https://i.ibb.co/k2j0wb79/IPF.png" alt="IPF Logo" />
+      </div>
+      <div class="institution">
+        <h1>Instituto Politecnico Formosa</h1>
+        <p>Portal Cautivo — Acceso a Red</p>
+      </div>
+    </div>
+
+    <div class="divider"><span>Autenticación requerida</span></div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="error-msg">
+          <svg viewBox="0 0 24 24" style="min-width:14px;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form id="loginForm" method="POST" autocomplete="off">
+      {% csrf_token %}
+
+      <div class="field">
+        <label for="dni">DNI</label>
+        <div class="input-wrap">
+          <input type="text" id="dni" name="dni" placeholder="Ej: 12345678" required />
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <div class="input-wrap">
+          <input type="email" id="email" name="email" placeholder="alumno@ipf.edu.ar" required />
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+      </div>
+
+      <div class="checkbox-wrap">
+        <input type="checkbox" id="remember" name="remember" value="1" />
+        <label for="remember">Recordar este dispositivo</label>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span class="btn-text">Ingresar a la Red</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <div class="card-footer">
+      <p>Red institucional — Uso exclusivo autorizado</p>
+      <span class="status-dot">Sistema activo</span>
+    </div>
+
+  </div>
+
+  <script>
+    // Solo dejamos una pequeña lógica visual para el botón cuando el usuario hace submit
+    // para que se muestre el spinner de carga mientras el backend procesa el POST
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', () => {
+      // Agrega clase loading al botón (no previene el envío hacia Django)
+      submitBtn.classList.add('loading');
+    });
+  </script>
+</body>
+</html>
