@@ -9,28 +9,42 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# 1. Definir BASE_DIR (Esto debe estar ARRIBA de todo)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ... otras configuraciones (SECRET_KEY, DEBUG, etc.) ...
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# 2. Ahora sí puedes usarlo para el diccionario
+RADIUS_DICT_PATH = os.path.join(BASE_DIR, 'radius_dict', 'dictionary')
 
-# SECURITY WARNING: keep the secret key used in production secret!
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# --- SEGURIDAD CRÍTICA ---
 SECRET_KEY = 'django-insecure-@j+4(pld)$n7u&1m3f33jihyftie%23&&oxecvp^yo#c!1d&0x'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-ALLOWED_HOSTS = ['tuusuario.pythonanywhere.com']
-CSRF_TRUSTED_ORIGINS = ['https://tuusuario.pythonanywhere.com']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATIC_URL = '/static/'
 
-# Application definition
+# Ajusta esto a la IP local de tu servidor y la del controlador Omada
+ALLOWED_HOSTS = ['*'] 
 
+# --- CONFIGURACIÓN DE SESIONES Y SEGURIDAD AGREGADA ---
+# Estas configuraciones aseguran que las sesiones de los alumnos sean robustas
+SESSION_COOKIE_SECURE = False  # Cambiar a True cuando tengas certificado SSL (HTTPS)
+CSRF_COOKIE_SECURE = False     # Cambiar a True cuando tengas certificado SSL (HTTPS)
+SESSION_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 86400  # 24 horas de sesión activa en el portal
+
+# Protección contra ataques comunes
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
+
+# --- DEFINICIÓN DE APLICACIONES ---
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,7 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'alumnos.middleware.RememberAlumnoMiddleware',
+    'alumnos.middleware.RememberAlumnoMiddleware', # Tu middleware actual
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -72,10 +86,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
+# --- BASE DE DATOS ---
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -83,43 +94,34 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
+# --- AUTENTICACIÓN ---
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
 AUTHENTICATION_BACKENDS = [
-    'alumnos.backends.AlumnoBackend',
-    'django.contrib.auth.backends.ModelBackend',  # por si quieres mantener admin normal
+    'alumnos.backends.AlumnoBackend', # Prioridad para alumnos
+    'django.contrib.auth.backends.ModelBackend',
 ]
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# --- CONFIGURACIÓN RADIUS PARA OMADA ER605 (NUEVO) ---
+# Define aquí los datos de tu servidor RADIUS
+RADIUS_SERVER = '127.0.0.1'     # IP donde corre tu FreeRADIUS o servidor de auth
+RADIUS_SECRET = b'secret_omada' # Debe coincidir con el del ER605
+RADIUS_DICT_PATH = '/usr/share/freeradius/dictionary.rfc2865' # Ruta en Linux (ajustar si usas Windows)
 
-TIME_ZONE = 'UTC'
-
+# --- INTERNACIONALIZACIÓN ---
+LANGUAGE_CODE = 'es-ar' # Cambiado a español de Argentina
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
-
 USE_TZ = True
 
+# --- ARCHIVOS ESTÁTICOS ---
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = 'static/'
-
+# Duración del token de "Recordar"
 REMEMBER_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 días
