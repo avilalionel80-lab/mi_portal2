@@ -36,6 +36,7 @@ CSRF_COOKIE_SECURE = False     # Cambiar a True cuando tengas certificado SSL (H
 SESSION_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 86400  # 24 horas de sesión activa en el portal
+SESSION_SAVE_EVERY_REQUEST = True  # Renovar sesión en cada petición para actualizar tiempo de expiración
 
 # Protección contra ataques comunes
 SECURE_BROWSER_XSS_FILTER = True

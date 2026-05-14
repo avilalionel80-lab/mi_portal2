@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal del Alumno — IPF</title>
+    <style>
+        :root {
+            --bg-deep:     #04080f;
+            --bg-card:     #0b1120;
+            --border:      rgba(0,180,255,0.18);
+            --accent:      #00b4ff;
+            --accent2:     #0066cc;
+            --accent3:     #00e5ff;
+            --text-main:   #e8f4fc;
+            --text-muted:  #7a9ab8;
+            --danger:      #ff4757;
+            --success:     #2ed573;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-deep);
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 80px rgba(0,100,200,0.12);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--text-main) 40%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .welcome-box {
+            background: rgba(0, 180, 255, 0.05);
+            border: 1px solid rgba(0, 180, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome-box h2 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: var(--accent3);
+        }
+
+        .welcome-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: rgba(15, 26, 46, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .info-card label {
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-card value {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+            word-break: break-word;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent2), var(--accent));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0,100,200,0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(0,120,220,0.55);
+        }
+
+        .btn-danger {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 71, 87, 0.15);
+            border-color: rgba(255, 71, 87, 0.5);
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bienvenido</h1>
+            <p>Portal del Alumno — Instituto Politecnico Formosa</p>
+        </div>
+
+        <div class="welcome-box">
+            <h2>✓ Sesión Iniciada</h2>
+            <p>Has ingresado correctamente a la red institucional</p>
+        </div>
+
+        {% if alumno %}
+        <div class="info-grid">
+            <div class="info-card">
+                <label>DNI</label>
+                <value>{{ alumno.dni }}</value>
+            </div>
+            <div class="info-card">
+                <label>Email</label>
+                <value>{{ alumno.email }}</value>
+            </div>
+            <div class="info-card" style="grid-column: 1 / -1;">
+                <label>Nombre Completo</label>
+                <value>{{ alumno.nombre_completo }}</value>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="{% url 'alumnos:logout' %}" class="btn btn-danger">Cerrar Sesión</a>
+        </div>
+
+        <div class="footer">
+            <p>Red institucional — Uso exclusivo autorizado</p>
+        </div>
+    </div>
+</body>
+</html>

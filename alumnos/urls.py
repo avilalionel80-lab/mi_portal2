@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views   # <--- Así se importa views desde el mismo paquete
+from . import views
 
 app_name = 'alumnos'
 urlpatterns = [
