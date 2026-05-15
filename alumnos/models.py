@@ -7,6 +7,7 @@ class Alumno(models.Model):
     nombre_completo = models.CharField(max_length=150)
     remember_token = models.CharField(max_length=64, null=True, blank=True, unique=True)
     es_admin = models.BooleanField(default=False) 
+    is_active = models.BooleanField(default=True, verbose_name="Activo en lista blanca")
 
     def __str__(self):
         return f"{self.nombre_completo} ({self.dni})"
