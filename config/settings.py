@@ -118,6 +118,11 @@ SOCIALACCOUNT_PROVIDERS = {
 SOCIALACCOUNT_ADAPTER = 'alumnos.adapter.WhitelistSocialAccountAdapter'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 LOGIN_REDIRECT_URL = '/alumnos/login/' 
+CSRF_TRUSTED_ORIGINS = [
+    'https://e142eead830b51.lhr.life',
+    'http://127.0.0.1:8000',
+    'http://192.168.220.131:8000',   # IP de tu VM, ajustala
+]
 
 # --- CONFIGURACIÓN RADIUS (única definición) ---
 RADIUS_SERVER = '127.0.0.1'
