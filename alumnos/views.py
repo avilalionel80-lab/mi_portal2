@@ -3,39 +3,47 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.conf import settings
 from .models import Alumno
+from .forms import LoginForm
+
 
 def alumno_login(request):
+    """Vista de login de alumnos con soporte para "Recordarme"."""
     if request.method == 'POST':
-        dni = request.POST.get('dni')
-        email = request.POST.get('email')
-        remember = request.POST.get('remember')
-
-        user = authenticate(request, dni=dni, email=email)
-
-        if user is not None:
-            login(request, user)
-            alumno = Alumno.objects.get(dni=dni)
-
-            if remember:
-                token = alumno.set_remember_token()
-                response = redirect('home')  # Asegúrate de tener una URL llamada 'home'
-                response.set_signed_cookie(
-                    'alumno_remember',
-                    token,
-                    salt='remember_alumno',
-                    max_age=settings.REMEMBER_COOKIE_AGE,
-                    httponly=True,
-                    secure=False,
-                )
-                return response
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            dni = form.cleaned_data['dni']
+            email = form.cleaned_data['email']
+            remember = form.cleaned_data.get('remember_me', False)
+            
+            # Autenticar usando el backend personalizado
+            user = authenticate(request, dni=dni, email=email)
+            
+            if user is not None:
+                login(request, user)
+                
+                # Extender la duración de la sesión si se marcó "Recordarme"
+                if remember:
+                    request.session.set_expiry(settings.REMEMBER_COOKIE_AGE)
+                    alumno = Alumno.objects.get(dni=dni)
+                    token = alumno.set_remember_token()
+                else:
+                    request.session.set_expiry(settings.SESSION_COOKIE_AGE)
+                
+                # Redirigir según el rol del usuario
+                if user.es_admin:
+                    return redirect('alumnos:admin_dashboard')
+                else:
+                    return redirect('alumnos:alumno_dashboard')
             else:
-                return redirect('home')
-        else:
-            messages.error(request, "DNI o email incorrectos.")
+                form.add_error(None, 'DNI o email incorrectos.')
+    else:
+        form = LoginForm()
+    
+    return render(request, 'alumnos/login.html', {'form': form})
 
-    return render(request, 'alumnos/login.html')
 
 def alumno_logout(request):
+    """Vista de logout que limpia la sesión y cookies."""
     if 'alumno_id' in request.session:
         alumno_id = request.session['alumno_id']
         try:
@@ -48,3 +56,22 @@ def alumno_logout(request):
     response = redirect('alumnos:login')
     response.delete_cookie('alumno_remember')
     return response
+
+
+def alumno_dashboard(request):
+    """Panel de inicio para alumnos."""
+    if not request.user.is_authenticated:
+        return redirect('alumnos:login')
+    
+    return render(request, 'alumnos/alumno_dashboard.html')
+
+
+def admin_dashboard(request):
+    """Panel de inicio para administradores."""
+    if not request.user.is_authenticated:
+        return redirect('alumnos:login')
+    
+    if not request.user.es_admin:
+        return redirect('alumnos:alumno_dashboard')
+    
+    return render(request, 'alumnos/admin_dashboard.html')

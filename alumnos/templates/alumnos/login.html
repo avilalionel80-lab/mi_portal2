@@ -511,9 +511,13 @@
       <p>Red institucional — Uso exclusivo autorizado</p>
       <span class="status-dot">Sistema activo</span>
     </div>
+    
+    {% load socialaccount %}
+<a href="{% provider_login_url 'google' %}">
+    <button type="button">Iniciar sesión con Google</button>
+</a>
 
   </div>
-
   <script>
     // Solo dejamos una pequeña lógica visual para el botón cuando el usuario hace submit
     // para que se muestre el spinner de carga mientras el backend procesa el POST
