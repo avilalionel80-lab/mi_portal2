@@ -55,6 +55,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -119,7 +120,7 @@ SOCIALACCOUNT_ADAPTER = 'alumnos.adapter.WhitelistSocialAccountAdapter'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 LOGIN_REDIRECT_URL = '/alumnos/login/' 
 CSRF_TRUSTED_ORIGINS = [
-    'https://e142eead830b51.lhr.life',
+    'https://tu-subdominio.a.free.pinggy.link',
     'http://127.0.0.1:8000',
     'http://192.168.220.131:8000',   # IP de tu VM, ajustala
 ]
