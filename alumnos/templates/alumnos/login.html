@@ -512,9 +512,10 @@
       <span class="status-dot">Sistema activo</span>
     </div>
     <hr>
-    {% load socialaccount %}
-<a href="{% provider_login_url 'google' %}">
-    <button type="button">Iniciar sesión con Google</button>
+ {% load socialaccount %}
+<a href="{% provider_login_url 'google' %}" class="google-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" width="20">
+    Iniciar sesión con Google
 </a>
 
   </div>
