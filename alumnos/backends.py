@@ -60,6 +60,9 @@ class AlumnoBackend(BaseBackend):
             }
         )
         
+        # Agregar el atributo es_admin para que la vista pueda redirigir
+        user.es_admin = getattr(alumno, 'es_admin', False)
+        
         request.session['alumno_id'] = alumno.id
         return user
 
