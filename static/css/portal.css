@@ -1,0 +1,119 @@
+/* ============================================================
+   NetShield — IPF · estilos compartidos del portal
+   Tokens de diseño, fondo animado, blobs, scanline y keyframes.
+   Lo específico de cada página queda en su propio <style>.
+   ============================================================ */
+
+:root {
+  --bg-deep:     #04080f;
+  --bg-card:     #0b1120;
+  --bg-panel:    #0f1a2e;
+  --border:      rgba(0,180,255,0.18);
+  --border-glow: rgba(0,180,255,0.55);
+  --accent:      #00b4ff;
+  --accent2:     #0066cc;
+  --accent3:     #00e5ff;
+  --text-main:   #e8f4fc;
+  --text-muted:  #7a9ab8;
+  --danger:      #ff4757;
+  --success:     #2ed573;
+  --admin-badge: #ffb142;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg-deep);
+  font-family: 'Exo 2', sans-serif;
+  color: var(--text-main);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── Fondo: grilla animada ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,180,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridDrift 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes gridDrift {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(40px); }
+}
+
+/* ── Blobs de luz ── */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+  animation: blobPulse 6s ease-in-out infinite alternate;
+}
+.blob1 { width: 500px; height: 500px; top: -100px; left: -100px; background: #0055aa; }
+.blob2 { width: 400px; height: 400px; bottom: -80px; right: -80px; background: #00b4ff; animation-delay: -3s; }
+@keyframes blobPulse {
+  from { opacity: 0.12; transform: scale(1); }
+  to   { opacity: 0.22; transform: scale(1.1); }
+}
+
+/* ── Línea de escaneo ── */
+.scanline {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.4;
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes scan {
+  0%   { top: 0; }
+  100% { top: 100vh; }
+}
+
+/* ── Anillo giratorio del logo (compartido) ── */
+.logo-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent2)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  animation: rotateSlow 8s linear infinite;
+}
+
+/* ── Esquinas tipo "bracket" de la tarjeta (compartido) ── */
+.card::before, .card::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  border-color: var(--accent);
+  border-style: solid;
+}
+.card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 14px 0 0 0; }
+.card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 14px 0; }
+
+/* ── Keyframes compartidos ── */
+@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

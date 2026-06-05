@@ -1,0 +1,118 @@
+{% extends "alumnos/base.html" %}
+{% load static %}
+{% block title %}Alumno — NetShield IPF{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col">
+    <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;">
+      Bienvenido, {{ user.first_name|default:user.username }}
+    </h2>
+    <p class="text-muted">Estás en el portal de alumnos. Disfruta de una navegación segura y controlada.</p>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <div class="d-flex align-items-center gap-3">
+        <span style="font-size:2.5rem;color:var(--accent);">⏱️</span>
+        <div>
+          <h5 class="card-title mb-1">Tiempo de sesión</h5>
+          <p class="text-muted small mb-2">Inicio: {% now "H:i" %}</p>
+          <span class="badge" style="background:rgba(46,213,115,0.12);color:var(--success);border:1px solid rgba(46,213,115,0.3);">Activa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <div class="d-flex align-items-center gap-3">
+        <span style="font-size:2.5rem;color:var(--accent);">📚</span>
+        <div>
+          <h5 class="card-title mb-1">Recursos educativos</h5>
+          <p class="text-muted small mb-2">Biblioteca digital</p>
+          <a href="#" class="btn btn-sm" style="background:rgba(0,180,255,0.1);color:var(--accent);border:1px solid rgba(0,180,255,0.2);">Ir</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <div class="d-flex align-items-center gap-3">
+        <span style="font-size:2.5rem;color:var(--accent);">🔒</span>
+        <div>
+          <h5 class="card-title mb-1">Políticas de uso</h5>
+          <p class="text-muted small mb-2">Normas de la red</p>
+          <a href="{% url 'terminos' %}" class="btn btn-sm" style="background:rgba(0,180,255,0.1);color:var(--accent);border:1px solid rgba(0,180,255,0.2);">Leer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-12">
+    <h3 style="font-family:'Rajdhani',sans-serif;font-weight:700;" class="mb-4">📚 Mis cursos y recursos</h3>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <div style="font-size:3rem;line-height:1;margin-bottom:1rem;color:var(--accent);">🏫</div>
+        <h5 class="card-title">Google Classroom</h5>
+        <p class="text-muted small card-text">Accede a tus clases virtuales y tareas.</p>
+        <a href="https://classroom.google.com" target="_blank" class="btn btn-sm" style="background:var(--accent2);color:#fff;border:none;">Ir a Classroom</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <div style="font-size:3rem;line-height:1;margin-bottom:1rem;color:var(--accent);">📖</div>
+        <h5 class="card-title">Biblioteca digital</h5>
+        <p class="text-muted small card-text">Consulta libros y material de estudio.</p>
+        <a href="#" class="btn btn-sm" style="background:var(--accent2);color:#fff;border:none;">Ir a la biblioteca</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <div style="font-size:3rem;line-height:1;margin-bottom:1rem;color:var(--accent);">📅</div>
+        <h5 class="card-title">Calendario académico</h5>
+        <p class="text-muted small card-text">Próximos exámenes, entregas y eventos.</p>
+        <a href="https://calendar.google.com" target="_blank" class="btn btn-sm" style="background:var(--accent2);color:#fff;border:none;">Ver calendario</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <h5 class="card-title">Enlaces rápidos</h5>
+      <div class="d-grid gap-2 mt-3">
+        <a href="#" class="btn" style="background:var(--bg-panel);border:1px solid var(--border);color:var(--text-main);text-align:left;">
+          📖 Mis cursos
+        </a>
+        <a href="#" class="btn" style="background:var(--bg-panel);border:1px solid var(--border);color:var(--text-main);text-align:left;">
+          📊 Calificaciones
+        </a>
+        <a href="#" class="btn" style="background:var(--bg-panel);border:1px solid var(--border);color:var(--text-main);text-align:left;">
+          📅 Horarios
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card p-4">
+      <h5 class="card-title">Avisos</h5>
+      <div class="mt-3 p-3 rounded" style="background:rgba(0,180,255,0.06);border:1px solid var(--border);">
+        <p class="small mb-0">
+          📢 Horario de acceso: Lunes a Viernes 7:00 – 22:00 hrs. Fuera de este horario el servicio estará limitado.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

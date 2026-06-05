@@ -1,0 +1,84 @@
+{% extends "alumnos/base.html" %}
+{% load static %}
+{% block title %}Admin — NetShield IPF{% endblock %}
+{% block home_url %}{% url 'alumnos:admin_dashboard' %}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col">
+    <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;">Panel de Control</h2>
+    <p class="text-muted">Gestión centralizada del portal cautivo</p>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-3">
+    <div class="card p-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="card-title mb-1" style="font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Usuarios activos</h6>
+          <h3 class="fw-bold mb-0" style="color:var(--accent);">12</h3>
+        </div>
+        <span style="font-size:2rem;color:var(--accent);">👥</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="card-title mb-1" style="font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Intentos fallidos</h6>
+          <h3 class="fw-bold mb-0" style="color:var(--danger);">3</h3>
+        </div>
+        <span style="font-size:2rem;color:var(--danger);">🚫</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="card-title mb-1" style="font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Sesiones hoy</h6>
+          <h3 class="fw-bold mb-0" style="color:var(--accent);">89</h3>
+        </div>
+        <span style="font-size:2rem;color:var(--accent);">📅</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="card-title mb-1" style="font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Ancho de banda</h6>
+          <h3 class="fw-bold mb-0" style="color:var(--accent3);">45 Mbps</h3>
+        </div>
+        <span style="font-size:2rem;color:var(--accent3);">📶</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <h5 class="card-title">👥 Gestión de alumnos</h5>
+      <p class="text-muted small">Activar, desactivar o añadir nuevos usuarios a la lista blanca.</p>
+      <a href="/admin/alumnos/alumno/" class="btn mt-auto" style="background:rgba(0,180,255,0.1);color:var(--accent);border:1px solid rgba(0,180,255,0.2);">Ir al listado</a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <h5 class="card-title">📋 Reportes</h5>
+      <p class="text-muted small">Consultar logs de acceso, consumo y eventos de seguridad.</p>
+      <a href="/admin/" class="btn mt-auto" style="background:rgba(0,180,255,0.1);color:var(--accent);border:1px solid rgba(0,180,255,0.2);">Ver reportes</a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <h5 class="card-title">⚙️ Configuración RADIUS</h5>
+      <p class="text-muted small">Revisar el estado del servidor FreeRADIUS y políticas de VLAN.</p>
+      <a href="/admin/" class="btn mt-auto" style="background:rgba(0,180,255,0.1);color:var(--accent);border:1px solid rgba(0,180,255,0.2);">Dashboard RADIUS</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

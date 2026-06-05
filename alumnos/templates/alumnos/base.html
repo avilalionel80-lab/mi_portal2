@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}NetShield — IPF{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/portal.css' %}"/>
+  {% block extra_head %}{% endblock %}
+  <style>
+    /* Tokens, fondo de grilla, blobs y scanline → static/css/portal.css */
+    .content-wrap {
+      position: relative; z-index: 2;
+    }
+    .navbar {
+      background: rgba(11,17,32,0.92) !important;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar-brand {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent) !important;
+    }
+    .navbar .nav-link {
+      color: var(--text-muted) !important;
+      transition: color 0.2s;
+    }
+    .navbar .nav-link:hover { color: var(--accent) !important; }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .text-muted { color: var(--text-muted) !important; }
+    .badge-accent {
+      background: rgba(0,180,255,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0,180,255,0.2);
+      font-family: 'Rajdhani', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="scanline"></div>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="{% block home_url %}{% url 'alumnos:alumno_dashboard' %}{% endblock %}">
+        <img src="https://i.ibb.co/k2j0wb79/IPF.png" alt="IPF" height="35" class="me-2">
+        NetShield
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-muted small d-none d-md-inline">
+          {{ user.get_full_name|default:user.username }}
+        </span>
+        <form method="post" action="{% url 'alumnos:logout' %}" class="d-inline m-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm" style="border:1px solid var(--border);color:var(--text-muted);background:transparent;">
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content-wrap container py-4">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-dismissible fade show" style="background:rgba(0,180,255,0.08);border:1px solid var(--border);color:var(--text-main);" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

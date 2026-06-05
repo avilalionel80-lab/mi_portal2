@@ -1,0 +1,35 @@
+{% extends "alumnos/base.html" %}
+{% block title %}Términos y Condiciones — NetShield IPF{% endblock %}
+{% block home_url %}{% url 'alumnos:login' %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card p-5">
+      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);">Términos y Condiciones de Uso</h2>
+      <hr style="border-color:var(--border);">
+
+      <h5 style="color:var(--accent);">1. Aceptación de los términos</h5>
+      <p class="text-muted small">Al acceder y utilizar la red institucional del Instituto Politécnico Formosa (IPF), usted acepta cumplir con estos términos y condiciones. Si no está de acuerdo, no debe utilizar el servicio.</p>
+
+      <h5 style="color:var(--accent);">2. Uso autorizado</h5>
+      <p class="text-muted small">El acceso a la red está destinado exclusivamente a fines educativos e institucionales. Queda prohibido el uso de la red para actividades ilícitas, la descarga de material con derechos de autor sin autorización, y cualquier acción que pueda comprometer la seguridad de la red.</p>
+
+      <h5 style="color:var(--accent);">3. Responsabilidad del usuario</h5>
+      <p class="text-muted small">Cada usuario es responsable de mantener la confidencialidad de sus credenciales de acceso. Cualquier actividad realizada a través de su cuenta será de su exclusiva responsabilidad.</p>
+
+      <h5 style="color:var(--accent);">4. Privacidad y monitoreo</h5>
+      <p class="text-muted small">La red institucional puede ser monitoreada para garantizar su correcto funcionamiento y seguridad. El IPF se reserva el derecho de registrar y revisar el tráfico de red en cumplimiento de las políticas institucionales.</p>
+
+      <h5 style="color:var(--accent);">5. Limitación de responsabilidad</h5>
+      <p class="text-muted small">El IPF no se hace responsable por daños directos o indirectos derivados del uso de la red, incluyendo pérdida de datos, interrupciones del servicio o problemas de seguridad.</p>
+
+      <h5 style="color:var(--accent);">6. Vigencia</h5>
+      <p class="text-muted small">Estos términos pueden ser actualizados periódicamente. El uso continuado de la red después de cualquier modificación constituye la aceptación de los nuevos términos.</p>
+
+      <hr style="border-color:var(--border);">
+      <p class="text-muted small text-center mb-0">Instituto Politécnico Formosa — Última actualización: 2026</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

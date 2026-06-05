@@ -10,28 +10,76 @@ from pathlib import Path
 # 1. BASE_DIR siempre al principio
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 2. Clave secreta (¡cambiala en producción!)
-SECRET_KEY = 'django-insecure-@j+4(pld)$n7u&1m3f33jihyftie%23&&oxecvp^yo#c!1d&0x'
+# Cargar variables desde un archivo .env si python-dotenv está instalado.
+# Es opcional: si no está, se usan las variables del sistema y los valores por defecto.
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    pass
 
-# 3. Modo debug (True para desarrollo, False en producción)
-DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+def env_bool(name, default=False):
+    """Lee una variable de entorno como booleano ('1', 'true', 'yes', 'on' -> True)."""
+    return os.environ.get(name, str(default)).strip().lower() in ('1', 'true', 'yes', 'on')
+
+
+# 2. Clave secreta: en PRODUCCIÓN debe venir de la variable de entorno DJANGO_SECRET_KEY.
+#    El valor por defecto solo es válido para desarrollo local.
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-@j+4(pld)$n7u&1m3f33jihyftie%23&&oxecvp^yo#c!1d&0x',
+)
+
+# 3. Modo debug: True en desarrollo. En producción exportá DJANGO_DEBUG=False.
+DEBUG = env_bool('DJANGO_DEBUG', True)
+
+# En desarrollo se permite cualquier host; en producción hay que declararlos por entorno
+# (DJANGO_ALLOWED_HOSTS="midominio.com,www.midominio.com").
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()]
 
 # --- SEGURIDAD Y SESIONES ---
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 86400  # 24 horas
 SESSION_SAVE_EVERY_REQUEST = True  # Renovar sesión en cada petición
 REMEMBER_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 días
+
+# El portal se publica detrás de Cloudflare Tunnel (cloudflared), que termina el TLS y
+# reenvía a gunicorn por HTTP local. Confiamos en la cabecera del proxy que indica que la
+# conexión original del cliente fue HTTPS.
+if env_bool('USE_PROXY_SSL_HEADER', not DEBUG):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Cookies seguras: en producción el tráfico público va por HTTPS (Cloudflare).
+SESSION_COOKIE_SECURE = env_bool('SESSION_COOKIE_SECURE', not DEBUG)
+CSRF_COOKIE_SECURE = env_bool('CSRF_COOKIE_SECURE', not DEBUG)
+
+# Redirección a HTTPS: la maneja Cloudflare ("Always Use HTTPS"). Forzarla en Django
+# detrás del túnel puede generar bucles, por eso queda OFF salvo que la actives a mano.
+SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', False)
+
+# HSTS: activalo SOLO con un dominio propio estable (NUNCA en *.trycloudflare.com).
+SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+SECURE_HSTS_PRELOAD = env_bool('SECURE_HSTS_PRELOAD', False)
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
+# --- django-axes (anti fuerza bruta) ---
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # hora
+AXES_LOCKOUT_URL = None  # Muestra 403 por defecto
+AXES_RESET_ON_SUCCESS = True
+# AXES_ONLY_USER_FAILURES fue eliminado en axes 8.x
+
+# --- django-session-timeout (ocio) ---
+SESSION_TIMEOUT = 1800  # 30 minutos de inactividad
 
 # --- APLICACIONES ---
 INSTALLED_APPS = [
@@ -48,20 +96,27 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'axes',
+    'django_session_timeout',
 ]
 
 SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise sirve los archivos estáticos directamente desde gunicorn (sin nginx).
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'alumnos.middleware.RememberAlumnoMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    'alumnos.middleware.AlumnoAdminMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -91,6 +146,9 @@ DATABASES = {
     }
 }
 
+# Tipo de clave primaria por defecto (evita la advertencia de migraciones de Django).
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 # --- AUTENTICACIÓN ---
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -100,6 +158,7 @@ AUTH_PASSWORD_VALIDATORS = [
  ]
 
 AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
     'alumnos.backends.AlumnoBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -107,9 +166,9 @@ AUTHENTICATION_BACKENDS = [
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': 'TU_CLIENT_ID',
-            'secret': 'TU_CLIENT_SECRET',
-            'key': ''
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET', ''),
+            'key': '',
         },
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
@@ -118,17 +177,71 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SOCIALACCOUNT_ADAPTER = 'alumnos.adapter.WhitelistSocialAccountAdapter'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-LOGIN_REDIRECT_URL = '/alumnos/login/' 
+# Tras el login (incluido Google) pasamos por una vista que redirige según el rol.
+LOGIN_REDIRECT_URL = 'alumnos:post_login'
+LOGIN_URL = 'alumnos:login'
+# Orígenes confiables para CSRF. Agregá tu hostname público de Cloudflare por entorno:
+#   CSRF_TRUSTED_ORIGINS="https://portal.tudominio.com,https://algo.trycloudflare.com"
 CSRF_TRUSTED_ORIGINS = [
-    'https://tu-subdominio.a.free.pinggy.link',
     'http://127.0.0.1:8000',
-    'http://192.168.220.131:8000',   # IP de tu VM, ajustala
+    'http://localhost:8000',
+]
+CSRF_TRUSTED_ORIGINS += [
+    o.strip() for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()
 ]
 
+# --- LOGGING ---
+# Aseguramos que la carpeta de logs exista (en una instalación nueva no está creada).
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} [{levelname}] {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / 'portal.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'alumnos': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'axes': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
 # --- CONFIGURACIÓN RADIUS (única definición) ---
-RADIUS_SERVER = '127.0.0.1'
-RADIUS_SECRET = b'secret_omada'
-RADIUS_DICT_PATH = '/usr/share/freeradius/dictionary.rfc2865'
+RADIUS_SERVER = os.environ.get('RADIUS_SERVER', '127.0.0.1')
+RADIUS_SECRET = os.environ.get('RADIUS_SECRET', 'secret_omada').encode()
+RADIUS_DICT_PATH = os.environ.get('RADIUS_DICT_PATH', '/usr/share/freeradius/dictionary.rfc2865')
+
+# Omitir RADIUS en desarrollo local (requiere DB local con Alumnos).
+# En producción exportá DEBUG_SKIP_RADIUS=False.
+DEBUG_SKIP_RADIUS = env_bool('DEBUG_SKIP_RADIUS', True)
 
 # --- INTERNACIONALIZACIÓN ---
 LANGUAGE_CODE = 'es-ar'
@@ -139,6 +252,10 @@ USE_TZ = True
 # --- ARCHIVOS ESTÁTICOS ---
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# Duración del "Recordar alumno"
-REMEMBER_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 días
+# WhiteNoise comprime y cachea los estáticos. Requiere ejecutar `collectstatic` en el deploy.
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+}

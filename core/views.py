@@ -1,17 +1,10 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from alumnos.models import Alumno
+from django.shortcuts import render
 
-@login_required(login_url='/alumnos/login/')
+
+@login_required(login_url="alumnos:login")
 def home(request):
-    # Obtener el alumno asociado al User logueado
-    try:
-        alumno = Alumno.objects.get(dni=request.user.username)
-    except Alumno.DoesNotExist:
-        # Si por alguna razón no hay Alumno, mostrar home normal o error
-        return render(request, 'core/home.html')
-
-    if alumno.es_admin:
-        return render(request, 'core/home_admin.html')
-    else:
-        return render(request, 'core/home.html')
+    # `es_admin` lo adjunta AlumnoAdminMiddleware en cada petición autenticada.
+    if getattr(request.user, "es_admin", False):
+        return render(request, "core/home_admin.html")
+    return render(request, "core/home.html")

@@ -1,0 +1,17 @@
+# Ejemplo de configuración de Cloudflare Tunnel (cloudflared).
+# Copialo a /etc/cloudflared/config.yml y reemplazá los valores.
+#
+# Requiere un túnel ya creado:
+#   cloudflared tunnel login
+#   cloudflared tunnel create mi-portal-ipf
+#   cloudflared tunnel route dns mi-portal-ipf portal.tudominio.com
+
+tunnel: <TUNNEL_ID>
+credentials-file: /etc/cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  # Todo lo que llegue a tu hostname público va a Gunicorn en localhost.
+  - hostname: portal.tudominio.com
+    service: http://127.0.0.1:8000
+  # Regla final obligatoria.
+  - service: http_status:404

@@ -1,24 +1,28 @@
+from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from allauth.exceptions import ImmediateHttpResponse
 from django.http import HttpResponseForbidden
-from django.contrib.auth import get_user_model
+
 from .models import Alumno
 
+
 class WhitelistSocialAccountAdapter(DefaultSocialAccountAdapter):
+    """Solo permite el login con Google a correos presentes en la lista blanca (Alumno)."""
+
     def pre_social_login(self, request, sociallogin):
-        email = sociallogin.account.extra_data.get('email', '').lower()
+        email = (sociallogin.account.extra_data.get("email") or "").lower()
+        if not email:
+            raise ImmediateHttpResponse(
+                HttpResponseForbidden("No se pudo obtener el correo de tu cuenta de Google.")
+            )
+
         try:
-            # Verifica que el correo esté en la tabla Alumno y activo
             alumno = Alumno.objects.get(email__iexact=email, is_active=True)
         except Alumno.DoesNotExist:
-            raise ImmediateHttpResponse(HttpResponseForbidden('Tu correo no está autorizado.'))
+            raise ImmediateHttpResponse(HttpResponseForbidden("Tu correo no está autorizado."))
 
-        # Obtiene o crea el usuario local asociado
-        User = get_user_model()
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            user = User.objects.create_user(username=email, email=email)
-            user.save()
+        # Si el login social ya está vinculado a un usuario, dejamos que allauth siga su curso.
+        if sociallogin.is_existing:
+            return
 
-        sociallogin.connect(request, user)
+        # Vinculamos al User de Django (username = dni), consistente con el backend RADIUS.
+        sociallogin.connect(request, alumno.sync_user())
