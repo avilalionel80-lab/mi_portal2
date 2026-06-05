@@ -1,4 +1,5 @@
 from django.contrib import admin
+<<<<<<< HEAD
 from .models import Alumno
 
 class AlumnoAdmin(admin.ModelAdmin):
@@ -16,3 +17,7 @@ class AlumnoAdmin(admin.ModelAdmin):
     desactivar_alumnos.short_description = "Desactivar alumnos seleccionados"
 
 admin.site.register(Alumno, AlumnoAdmin)
+=======
+
+# Register your models here.
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # mi_portal
 
 Portal cautivo del **Instituto Politécnico Formosa** (Django). Autentica alumnos por
@@ -37,3 +38,6 @@ El despliegue en **Ubuntu Server** (como portal cautivo del **Omada ER605**, pub
 
 Toda la configuración sensible se lee de variables de entorno (ver **[.env.example](.env.example)**):
 clave secreta, debug, hosts permitidos, credenciales de Google y parámetros de RADIUS.
+=======
+# Mi_portal
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531

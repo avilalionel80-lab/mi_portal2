@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 {% load static %}
+=======
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,10 +9,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Portal Cautivo — IPF</title>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<<<<<<< HEAD
   <link rel="stylesheet" href="{% static 'css/portal.css' %}"/>
   <style>
     /* Tokens, fondo de grilla, blobs y scanline → static/css/portal.css */
     body { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+=======
+  <style>
+    :root {
+      --bg-deep:     #04080f;
+      --bg-card:     #0b1120;
+      --bg-panel:    #0f1a2e;
+      --border:      rgba(0,180,255,0.18);
+      --border-glow: rgba(0,180,255,0.55);
+      --accent:      #00b4ff;
+      --accent2:     #0066cc;
+      --accent3:     #00e5ff;
+      --text-main:   #e8f4fc;
+      --text-muted:  #7a9ab8;
+      --danger:      #ff4757;
+      --success:     #2ed573;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-deep);
+      font-family: 'Exo 2', sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Animated grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,180,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,180,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridDrift 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gridDrift {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+
+    /* ── Radial glow blobs ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobPulse 6s ease-in-out infinite alternate;
+    }
+    .blob1 { width: 500px; height: 500px; top: -100px; left: -100px; background: #0055aa; }
+    .blob2 { width: 400px; height: 400px; bottom: -80px; right: -80px; background: #00b4ff; animation-delay: -3s; }
+
+    @keyframes blobPulse {
+      from { opacity: 0.12; transform: scale(1); }
+      to   { opacity: 0.22; transform: scale(1.1); }
+    }
+
+    /* ── Scan line ── */
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.4;
+      animation: scan 4s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes scan {
+      0%   { top: 0; }
+      100% { top: 100vh; }
+    }
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
 
     /* ── Main card ── */
     .card {
@@ -389,6 +477,7 @@
 
     <div class="divider"><span>Autenticación requerida</span></div>
 
+<<<<<<< HEAD
     {% for error in form.non_field_errors %}
       <div class="error-msg">
         <svg viewBox="0 0 24 24" style="min-width:14px;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2">
@@ -399,14 +488,25 @@
     {% endfor %}
     {% for field in form %}
       {% for error in field.errors %}
+=======
+    {% if messages %}
+      {% for message in messages %}
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
         <div class="error-msg">
           <svg viewBox="0 0 24 24" style="min-width:14px;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
+<<<<<<< HEAD
           <span>{{ error }}</span>
         </div>
       {% endfor %}
     {% endfor %}
+=======
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    {% endif %}
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
 
     <form id="loginForm" method="POST" autocomplete="off">
       {% csrf_token %}
@@ -414,7 +514,11 @@
       <div class="field">
         <label for="dni">DNI</label>
         <div class="input-wrap">
+<<<<<<< HEAD
           <input type="text" id="dni" name="dni" placeholder="Ej: 12345678" value="{{ form.dni.value|default:'' }}" required />
+=======
+          <input type="text" id="dni" name="dni" placeholder="Ej: 12345678" required />
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
       </div>
@@ -422,12 +526,17 @@
       <div class="field">
         <label for="email">Email</label>
         <div class="input-wrap">
+<<<<<<< HEAD
           <input type="email" id="email" name="email" placeholder="alumno@ipf.edu.ar" value="{{ form.email.value|default:'' }}" required />
+=======
+          <input type="email" id="email" name="email" placeholder="alumno@ipf.edu.ar" required />
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
           <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         </div>
       </div>
 
       <div class="checkbox-wrap">
+<<<<<<< HEAD
         <input type="checkbox" id="remember" name="remember_me" value="1" {% if form.remember_me.value %}checked{% endif %} />
         <label for="remember">Recordar este dispositivo</label>
       </div>
@@ -437,6 +546,12 @@
         <label for="terms">Acepto los <a href="{% url 'terminos' %}" target="_blank" style="color:var(--accent);text-decoration:none;">términos y condiciones</a></label>
       </div>
 
+=======
+        <input type="checkbox" id="remember" name="remember" value="1" />
+        <label for="remember">Recordar este dispositivo</label>
+      </div>
+
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
       <button type="submit" class="btn-submit" id="submitBtn">
         <span class="btn-text">Ingresar a la Red</span>
         <div class="spinner"></div>
@@ -447,6 +562,7 @@
       <p>Red institucional — Uso exclusivo autorizado</p>
       <span class="status-dot">Sistema activo</span>
     </div>
+<<<<<<< HEAD
     {% load socialaccount %}
 <div class="text-center my-4">
   <a href="{% provider_login_url 'google' %}" class="google-btn">
@@ -482,6 +598,14 @@
     color: #202124;
   }
 </style>
+=======
+    <hr>
+ {% load socialaccount %}
+<a href="{% provider_login_url 'google' %}" class="google-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" width="20">
+    Iniciar sesión con Google
+</a>
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
 
   </div>
   <script>
@@ -496,4 +620,8 @@
     });
   </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531

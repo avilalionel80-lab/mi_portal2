@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
@@ -139,3 +140,8 @@ class AccessControlTests(TestCase):
         })
         resp = self.client.get(reverse("alumnos:admin_dashboard"))
         self.assertRedirects(resp, reverse("alumnos:alumno_dashboard"), fetch_redirect_response=False)
+=======
+from django.test import TestCase
+
+# Create your tests here.
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531

@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 {% load static %}
+=======
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,11 +9,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin — Portal IPF</title>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<<<<<<< HEAD
   <link rel="stylesheet" href="{% static 'css/portal.css' %}"/>
   <style>
     /* ── Variables y estructura base intactas ── */
     /* Tokens (incluye --admin-badge), fondo, blobs y scanline → static/css/portal.css */
     body { display: flex; align-items: center; justify-content: center; overflow-x: hidden; }
+=======
+  <style>
+    /* ── Variables y estructura base intactas ── */
+    :root {
+      --bg-deep:     #04080f;
+      --bg-card:     #0b1120;
+      --bg-panel:    #0f1a2e;
+      --border:      rgba(0,180,255,0.18);
+      --border-glow: rgba(0,180,255,0.55);
+      --accent:      #00b4ff;
+      --accent2:     #0066cc;
+      --accent3:     #00e5ff;
+      --text-main:   #e8f4fc;
+      --text-muted:  #7a9ab8;
+      --danger:      #ff4757;
+      --success:     #2ed573;
+      --admin-badge: #ffb142; /* Color especial sutil para el rol admin */
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-deep);
+      font-family: 'Exo 2', sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,180,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,180,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridDrift 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gridDrift {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobPulse 6s ease-in-out infinite alternate;
+    }
+    .blob1 { width: 500px; height: 500px; top: -100px; left: -100px; background: #0055aa; }
+    .blob2 { width: 400px; height: 400px; bottom: -80px; right: -80px; background: #00b4ff; animation-delay: -3s; }
+
+    @keyframes blobPulse {
+      from { opacity: 0.12; transform: scale(1); }
+      to   { opacity: 0.22; transform: scale(1.1); }
+    }
+
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.4;
+      animation: scan 4s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes scan {
+      0%   { top: 0; }
+      100% { top: 100vh; }
+    }
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
 
     .card {
       position: relative;
@@ -301,6 +388,7 @@
       </a>
     </nav>
 
+<<<<<<< HEAD
     <form method="post" action="{% url 'alumnos:logout' %}" style="margin:0;">
       {% csrf_token %}
       <button type="submit" class="btn-logout" style="width:100%;cursor:pointer;">
@@ -308,6 +396,12 @@
         Cerrar Sesión
       </button>
     </form>
+=======
+    <a href="{% url 'alumnos:logout' %}" class="btn-logout">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      Cerrar Sesión
+    </a>
+>>>>>>> 9b81311266f5c31fcfbb511a3849a1f6652a2531
 
     <div class="card-footer">
       <p>Módulo Administrativo — Acceso Restringido</p>
