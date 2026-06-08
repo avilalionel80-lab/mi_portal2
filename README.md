@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # mi_portal
 
 Portal cautivo del **Instituto Politécnico Formosa** (Django). Autentica alumnos por
